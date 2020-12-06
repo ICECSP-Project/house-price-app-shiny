@@ -1,0 +1,12 @@
+name: HousePricePrediction_byAR32
+title: HousePricePrediction_byAR32
+username:
+account: aquaregis32
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3360392
+bundleId: 3950581
+url: https://aquaregis32.shinyapps.io/HousePricePrediction_byAR32/
+when: 1607266362.97666
+asMultiple: FALSE
+asStatic: FALSE
