@@ -1,17 +1,15 @@
 library(caret)
 library(stats)
-library(shiny)
-library(sf)
-library(raster)
 library(dplyr)
-library(spData)
-library(spDataLarge)
-library(tmap) 
+library(ggplot2)
 library(gridExtra)
+library(shiny)
+
 
 mdl = get(load(file ="./models/extended_model.rda", .GlobalEnv))
-data = read.csv("data/s_data.csv")
-suppressWarnings({load("data/map/beijing_map.RData", verbose = T)})
+#data = read.csv("data/s_data.csv")
+data = readRDS(file = "data/s_data.rds")
+suppressWarnings({load("data/map/beijing_map.RData", verbose = T, .GlobalEnv)})
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -76,8 +74,8 @@ ui <- fluidPage(
             #tableOutput("table"),
             tabsetPanel(type = "tabs",
                         tabPanel("Districts", plotOutput("plot1")),
-                        tabPanel("Summary", tableOutput("summary")),
-                        tabPanel("Learning Model", tableOutput("table"))
+                        tabPanel("Model Summary", verbatimTextOutput("summary")),
+                        tabPanel("Outcome", tableOutput("table"))
             )
         )
     ),
@@ -118,21 +116,20 @@ server <- function(input, output) {
 
     
     output$plot1 = renderPlot({
-        map1 = beijing + geom_point(data = data, aes(x = Lng, y = Lat, colour = factor(district)), alpha = 0.4, na.rm = T)
+        #map1 = beijing + geom_point(data = data, aes(x = Lng, y = Lat, colour = factor(district)), alpha = 0.4, na.rm = T)
         bar1 = ggplot(data, 
                       aes(y = price, x = factor(district), fill = factor(district))
         ) + geom_bar(stat = "identity") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-        grid.arrange(map1, bar1, nrow = 1)
+        #grid.arrange(map1, bar1, nrow = 2)
+        bar1
     }) 
     output$table = renderPrint({
         cat("<h1>Predicted value:</h1>")
         cat("<h3>The price is estimated to be: ",pred(),"</h3>")
-        cat("<h5>Using the parameters you can find the predicted cost of house 
-            the selected region<h5>")
     })
-    output$summary = renderTable({
-        print({createUserDf()})
-    })
+    output$summary = renderPrint(
+        summary(mdl)
+    )
     pred = eventReactive(input$Run_model, {
         predict(mdl, newdata = createUserDf())
     })
