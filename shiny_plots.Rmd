@@ -1,0 +1,33 @@
+---
+title: "Shiny Plots"
+author: "Anandu R"
+date: "12/13/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+```{r}
+library(caret)
+library(stats)
+library(dplyr)
+library(mapproj)
+```
+
+```{r}
+data = read.csv("data/s_data.csv")
+load("data/map/beijing_map.RData", verbose = T)
+```
+
+```{r}
+head(data)
+```
+
+
+```{r}
+beijing + geom_point(data = data, aes(x = Lng, y = Lat, colour = factor(district)), alpha = 0.4, na.rm = T)
+```
+
